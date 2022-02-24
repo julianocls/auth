@@ -13,22 +13,25 @@ import java.io.IOException;
 
 public class JwtTokenFilter extends GenericFilterBean {
 
-    private final JwtTokenProvider tokenProvider;
+    private final JwtTokenProvider jwtTokenProvider;
 
     @Autowired
-    public JwtTokenFilter(JwtTokenProvider tokenProvider) {
-        this.tokenProvider = tokenProvider;
+    public JwtTokenFilter(JwtTokenProvider jwtTokenProvider) {
+        this.jwtTokenProvider = jwtTokenProvider;
     }
 
     @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-        var token = tokenProvider.resolveToken((HttpServletRequest) request);
-        if (token != null && tokenProvider.validationToken(token)) {
-            var auth = tokenProvider.getAuthentication(token);
-            if (auth != null) {
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+            throws IOException, ServletException {
+
+        var token = jwtTokenProvider.resolveToken((HttpServletRequest) request);
+        if(token != null && jwtTokenProvider.validateToken(token)) {
+            var auth = jwtTokenProvider.getAuthentication(token);
+            if(auth != null) {
                 SecurityContextHolder.getContext().setAuthentication(auth);
             }
-            chain.doFilter(request, response);
         }
+        chain.doFilter(request, response);
     }
+
 }

@@ -23,5 +23,5 @@ spring:
 security:
   jwt:
     token:
-      secret-key: chave_microservice
+      secret-key: chave_microservices
       expire-length: 360000
