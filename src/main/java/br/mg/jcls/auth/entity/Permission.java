@@ -8,15 +8,15 @@ import java.io.Serializable;
 
 @Entity
 @Table(name = "permission")
-@Setter
 @Getter
+@Setter
+@ToString
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString
 @EqualsAndHashCode
 public class Permission implements GrantedAuthority, Serializable {
 
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = -4460602054299804896L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,4 +29,5 @@ public class Permission implements GrantedAuthority, Serializable {
     public String getAuthority() {
         return this.description;
     }
+
 }

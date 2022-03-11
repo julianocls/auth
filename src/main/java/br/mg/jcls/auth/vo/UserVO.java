@@ -1,32 +1,20 @@
 package br.mg.jcls.auth.vo;
 
-import br.mg.jcls.auth.entity.User;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.*;
-import org.modelmapper.ModelMapper;
-import org.springframework.hateoas.RepresentationModel;
 
 import java.io.Serializable;
 
-@JsonPropertyOrder({"username", "password"})
-@Setter
 @Getter
+@Setter
+@ToString
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString
-@EqualsAndHashCode(callSuper = false)
-public class UserVO extends RepresentationModel<UserVO> implements Serializable {
+@EqualsAndHashCode
+public class UserVO implements Serializable {
 
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = -8387927312441830960L;
 
-    @JsonProperty("username")
-    private String username;
+    private String userName;
+    private String password;
 
-    @JsonProperty("password")
-    private Integer password;
-
-    public static UserVO create(User user) {
-        return new ModelMapper().map(user, UserVO.class);
-    }
 }

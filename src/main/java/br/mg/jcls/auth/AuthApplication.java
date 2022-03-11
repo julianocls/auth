@@ -1,7 +1,5 @@
 package br.mg.jcls.auth;
 
-import java.util.Arrays;
-
 import br.mg.jcls.auth.entity.Permission;
 import br.mg.jcls.auth.entity.User;
 import br.mg.jcls.auth.repository.PermissionRepository;
@@ -13,6 +11,7 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+import java.util.Arrays;
 
 @SpringBootApplication
 @EnableDiscoveryClient
@@ -35,7 +34,7 @@ public class AuthApplication {
                            BCryptPasswordEncoder passwordEncoder) {
 
         Permission permission = null;
-        Permission findPermission = permissionRepository.findByDescription("Admin").get();
+        Permission findPermission = permissionRepository.findByDescription("Admin");
         if (findPermission == null) {
             permission = new Permission();
             permission.setDescription("Admin");
@@ -45,7 +44,7 @@ public class AuthApplication {
         }
 
         User admin = new User();
-        admin.setUserName("klayrocha");
+        admin.setUserName("juliano");
         admin.setAccountNonExpired(true);
         admin.setAccountNonLocked(true);
         admin.setCredentialsNonExpired(true);
@@ -53,7 +52,7 @@ public class AuthApplication {
         admin.setPassword(passwordEncoder.encode("123456"));
         admin.setPermissions(Arrays.asList(permission));
 
-        User find = userRepository.findByUserName("Juliano").get();
+        User find = userRepository.findByUserName("juliano");
         if (find == null) {
             userRepository.save(admin);
         }

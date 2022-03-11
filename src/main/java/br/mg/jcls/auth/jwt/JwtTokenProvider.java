@@ -1,14 +1,12 @@
 package br.mg.jcls.auth.jwt;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.JwtException;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Base64;
 import java.util.Date;
 import java.util.List;
+
 
 @Service
 public class JwtTokenProvider {
@@ -37,18 +36,18 @@ public class JwtTokenProvider {
     }
 
     public String createToken(String username, List<String> roles){
-        var claims = Jwts.claims().setSubject(username);
+        Claims claims = Jwts.claims().setSubject(username);
         claims.put("roles", roles);
 
-        var now = new Date();
-        var validate =  new Date(now.getTime() + expire);
+        Date now = new Date();
+        Date validate =  new Date(now.getTime() + expire);
 
         return Jwts.builder().setClaims(claims).setIssuedAt(now).setExpiration(validate)
                 .signWith(SignatureAlgorithm.HS256, secretKey).compact();
     }
 
     public Authentication getAuthentication(String token) {
-        var userDetails = this.userDetailsService.loadUserByUsername(getUserName(token));
+        UserDetails userDetails = this.userDetailsService.loadUserByUsername(getUserName(token));
         return new UsernamePasswordAuthenticationToken(userDetails, "",userDetails.getAuthorities());
     }
 
@@ -57,7 +56,7 @@ public class JwtTokenProvider {
     }
 
     public String resolveToken(HttpServletRequest req) {
-        var bearerToken = req.getHeader("Authorization");
+        String bearerToken = req.getHeader("Authorization");
         if(bearerToken !=null && bearerToken.startsWith("Bearer ")) {
             return bearerToken.substring(7,bearerToken.length());
         }
@@ -66,7 +65,7 @@ public class JwtTokenProvider {
 
     public boolean validateToken(String token) {
         try {
-            var claims = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
+            Jws<Claims> claims = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
             if(claims.getBody().getExpiration().before(new Date())) {
                 return false;
             }

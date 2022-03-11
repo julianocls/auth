@@ -12,15 +12,15 @@ import java.util.List;
 
 @Entity
 @Table(name = "user")
-@Setter
 @Getter
+@Setter
+@ToString
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString
 @EqualsAndHashCode
-public class User implements UserDetails, Serializable {
+public class User implements UserDetails, Serializable{
 
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = -9020973236707102285L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,41 +33,41 @@ public class User implements UserDetails, Serializable {
     private String password;
 
     @Column(name = "accountNonExpired")
-    private boolean accountNonExpired;
+    private Boolean accountNonExpired;
 
     @Column(name = "accountNonLocked")
-    private boolean accountNonLocked;
+    private Boolean accountNonLocked;
 
     @Column(name = "credentialsNonExpired")
-    private boolean credentialsNonExpired;
+    private Boolean credentialsNonExpired;
 
     @Column(name = "enabled")
-    private boolean enabled;
+    private Boolean enabled;
+
 
     @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "user_permission", joinColumns = {@JoinColumn(name = "id_user")},
-            inverseJoinColumns = {@JoinColumn(name = "id_permissions")})
-    private List<Permission> permissions = new ArrayList<>();
+    @JoinTable(name = "user_permission" ,  joinColumns = { @JoinColumn(name="id_user")},
+            inverseJoinColumns = { @JoinColumn(name="id_permissions")})
+    private List<Permission> permissions;
+
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return this.permissions;
     }
 
-    public List<String> getRoles() {
-        var roles = new ArrayList<String>();
-        permissions.stream().forEach(p -> roles.add(p.getDescription()));
+    public List<String> getRoles(){
+        List<String> roles = new ArrayList<>();
+        this.permissions.stream()
+                .forEach( p -> {
+                    roles.add(p.getDescription());
+                });
         return roles;
     }
 
     @Override
-    public String getPassword() {
-        return this.password;
-    }
-
-    @Override
     public String getUsername() {
-        return this.userName;
+        return userName;
     }
 
     @Override
